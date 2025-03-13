@@ -12,8 +12,10 @@ import {
   NodeTypes
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import '../styles/flowchart.css';
 import NodeCard from './NodeCard';
 import JiraServiceNodes from './JiraServiceNodes';
+import ProjectHierarchyNodes from './ProjectHierarchyNodes';
 
 const nodeTypes: NodeTypes = {
   card: NodeCard,
@@ -30,7 +32,16 @@ const nodeTypes: NodeTypes = {
   issueUpdate: JiraServiceNodes.IssueUpdateNode,
   task: JiraServiceNodes.TaskNode,
   taskBox: JiraServiceNodes.TaskBoxNode,
-  threadPool: JiraServiceNodes.ThreadPoolNode
+  threadPool: JiraServiceNodes.ThreadPoolNode,
+  // Project Hierarchy nodes
+  cluster: ProjectHierarchyNodes.ClusterNode,
+  projectNode: ProjectHierarchyNodes.ProjectNode,
+  projectDeletedNode: ProjectHierarchyNodes.ProjectDeletedNode,
+  projectSetNode: ProjectHierarchyNodes.ProjectSetNode,
+  taskNode: ProjectHierarchyNodes.TaskNode,
+  labelNode: ProjectHierarchyNodes.LabelNode,
+  caseLabel: ProjectHierarchyNodes.CaseLabelNode,
+  explanation: ProjectHierarchyNodes.ExplanationNode
 };
 
 const AgentFramework: React.FC = () => {
@@ -40,243 +51,340 @@ const AgentFramework: React.FC = () => {
   useEffect(() => {
     // Define the nodes for our visualization
     const initialNodes: Node[] = [
-      // Left Side - Jira Service
+      // Row Labels
       {
-        id: 'jira-title',
-        type: 'default',
-        position: { x: 170, y: 50 },
-        data: { label: 'Jira服务' },
-        style: { fontSize: '20px', fontWeight: 'bold', width: 120, background: 'transparent', border: 'none' }
+        id: 'label-cluster',
+        type: 'labelNode',
+        position: { x: 50, y: 50 },
+        data: { label: '集群' },
       },
       {
-        id: 'user',
-        type: 'user',
-        position: { x: 60, y: 150 },
-        data: {}
+        id: 'label-top',
+        type: 'labelNode',
+        position: { x: 50, y: 150 },
+        data: { label: 'top项目组' },
       },
       {
-        id: 'ui',
-        type: 'ui',
-        position: { x: 170, y: 250 },
-        data: { label: 'UI' }
+        id: 'label-middle',
+        type: 'labelNode',
+        position: { x: 50, y: 250 },
+        data: { label: '中间层级的项目组' },
       },
       {
-        id: 'webhook',
-        type: 'webhook',
-        position: { x: 170, y: 420 },
-        data: { label: 'webhook' }
+        id: 'label-bottom',
+        type: 'labelNode',
+        position: { x: 50, y: 350 },
+        data: { label: 'bottom项目组' },
       },
       {
-        id: 'server',
-        type: 'server',
-        position: { x: 170, y: 670 },
-        data: { label: 'server' }
+        id: 'label-project-set',
+        type: 'labelNode',
+        position: { x: 50, y: 450 },
+        data: { label: '项目（省略项目集）' },
+      },
+      {
+        id: 'label-task',
+        type: 'labelNode',
+        position: { x: 50, y: 550 },
+        data: { label: '任务' },
       },
       
-      // Right Side - Project Service
+      // Case 1 - Deleting bottom project group
       {
-        id: 'project-title',
-        type: 'default',
-        position: { x: 840, y: 50 },
-        data: { label: '项目中台服务' },
-        style: { fontSize: '20px', fontWeight: 'bold', width: 200, background: 'transparent', border: 'none' }
+        id: 'cluster-1',
+        type: 'cluster',
+        position: { x: 430, y: 50 },
       },
       {
-        id: 'issue-entry',
-        type: 'issueEntry',
-        position: { x: 570, y: 370 },
-        data: { label: 'issue管理入口' }
+        id: 'top-1-1',
+        type: 'projectNode',
+        position: { x: 380, y: 150 },
       },
       {
-        id: 'webhook-url',
-        type: 'webhookUrl',
-        position: { x: 570, y: 470 },
-        data: { label: 'webhook-url' }
+        id: 'middle-1-1',
+        type: 'projectNode',
+        position: { x: 330, y: 250 },
       },
       {
-        id: 'issue-blue',
-        type: 'issueBlue',
-        position: { x: 570, y: 570 },
-        data: { label: 'issue' }
+        id: 'bottom-1-1',
+        type: 'projectDeletedNode',
+        position: { x: 280, y: 350 },
       },
       {
-        id: 'issue-update',
-        type: 'issueUpdate',
-        position: { x: 570, y: 700 },
-        data: { label: '增量拉取更新issue' }
+        id: 'project-1-1',
+        type: 'projectSetNode',
+        position: { x: 280, y: 450 },
       },
       {
-        id: 'issue-submit',
-        type: 'issueSubmit',
-        position: { x: 570, y: 250 },
-        data: { label: '提交变更issue' }
+        id: 'task-1-1',
+        type: 'taskNode',
+        position: { x: 230, y: 550 },
       },
       {
-        id: 'redis-container',
-        type: 'redisContainer',
-        position: { x: 820, y: 220 },
-        data: { 
-          title: '变更Issue缓冲',
-          queueTitle: 'redis队列' 
-        }
+        id: 'task-1-2',
+        type: 'taskNode',
+        position: { x: 330, y: 550 },
       },
       {
-        id: 'issue-get',
-        type: 'issueGet',
-        position: { x: 1070, y: 250 },
-        data: { label: '获取变更issue' }
+        id: 'case-1',
+        type: 'caseLabel',
+        position: { x: 280, y: 650 },
+        data: { label: 'case1' },
+      },
+      
+      // Case 2 - Deleting top project group
+      {
+        id: 'cluster-2',
+        type: 'cluster',
+        position: { x: 580, y: 50 },
       },
       {
-        id: 'task-box-seal',
-        type: 'taskBox',
-        position: { x: 1070, y: 370 },
-        data: { label: '封装更新task' }
+        id: 'top-2-1',
+        type: 'projectDeletedNode',
+        position: { x: 580, y: 150 },
       },
       {
-        id: 'task',
-        type: 'task',
-        position: { x: 1070, y: 490 },
-        data: { label: 'task' }
+        id: 'middle-2-1',
+        type: 'projectNode',
+        position: { x: 580, y: 250 },
       },
       {
-        id: 'task-box-execute',
-        type: 'taskBox',
-        position: { x: 1070, y: 610 },
-        data: { label: '执行task' }
+        id: 'bottom-2-1',
+        type: 'projectNode',
+        position: { x: 580, y: 350 },
       },
       {
-        id: 'thread-pool',
-        type: 'threadPool',
-        position: { x: 820, y: 550 },
-        data: { title: '任务更新线程池' }
+        id: 'project-2-1',
+        type: 'projectSetNode',
+        position: { x: 580, y: 450 },
+      },
+      {
+        id: 'task-2-1',
+        type: 'taskNode',
+        position: { x: 580, y: 550 },
+      },
+      {
+        id: 'case-2',
+        type: 'caseLabel',
+        position: { x: 580, y: 650 },
+        data: { label: 'case2' },
+      },
+      
+      // Case 3 - Deleting middle project group
+      {
+        id: 'cluster-3',
+        type: 'cluster',
+        position: { x: 730, y: 50 },
+      },
+      {
+        id: 'top-3-1',
+        type: 'projectNode',
+        position: { x: 780, y: 150 },
+      },
+      {
+        id: 'middle-3-1',
+        type: 'projectDeletedNode',
+        position: { x: 830, y: 250 },
+      },
+      {
+        id: 'bottom-3-1',
+        type: 'projectNode',
+        position: { x: 880, y: 350 },
+      },
+      {
+        id: 'project-3-1',
+        type: 'projectSetNode',
+        position: { x: 880, y: 450 },
+      },
+      {
+        id: 'task-3-1',
+        type: 'taskNode',
+        position: { x: 880, y: 550 },
+      },
+      {
+        id: 'case-3',
+        type: 'caseLabel',
+        position: { x: 880, y: 650 },
+        data: { label: 'case3' },
+      },
+      
+      // Table at the bottom
+      {
+        id: 'table-header-1',
+        type: 'explanation',
+        position: { x: 170, y: 730 },
+        data: { label: '删除项目组' },
+        style: { border: '1px solid #ccc', backgroundColor: '#f5f5f5', fontWeight: 'bold', textAlign: 'center' }
+      },
+      {
+        id: 'table-header-2',
+        type: 'explanation',
+        position: { x: 520, y: 730 },
+        data: { label: '节点转项目集' },
+        style: { border: '1px solid #ccc', backgroundColor: '#f5f5f5', fontWeight: 'bold', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-1-1',
+        type: 'explanation',
+        position: { x: 170, y: 780 },
+        data: { label: 'case1：删除bottom项目组' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-1-2',
+        type: 'explanation',
+        position: { x: 520, y: 780 },
+        data: { label: '节点转项目集' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-2-1',
+        type: 'explanation',
+        position: { x: 170, y: 830 },
+        data: { label: 'case2：删除top项目组' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-2-2',
+        type: 'explanation',
+        position: { x: 520, y: 830 },
+        data: { label: '其下的项目及任务数据，不纳入组织架构维度的统计' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-3-1',
+        type: 'explanation',
+        position: { x: 170, y: 880 },
+        data: { label: 'case3：删除中间层的项目组' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
+      },
+      {
+        id: 'table-cell-3-2',
+        type: 'explanation',
+        position: { x: 520, y: 880 },
+        data: { label: '项目层级错误，tpc自身的bug，报警人工介入' },
+        style: { border: '1px solid #ccc', padding: '10px', minWidth: '200px', textAlign: 'center' }
       }
     ];
 
     // Define the edges for our visualization
     const initialEdges: Edge[] = [
-      // Left Side - Jira Service connections
+      // Case 1
       {
-        id: 'user-to-ui',
-        source: 'user',
-        target: 'ui',
-        label: 'operate',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-      },
-      {
-        id: 'ui-to-webhook',
-        source: 'ui',
-        target: 'webhook',
-        label: 'advice',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-      },
-      {
-        id: 'webhook-to-webhook-url',
-        source: 'webhook',
-        target: 'webhook-url',
-        label: 'push',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12, fill: 'red' },
+        id: 'cluster-1-to-top-1-1',
+        source: 'cluster-1',
+        target: 'top-1-1',
         type: 'default',
-        style: { stroke: 'red', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'server-to-issue-update',
-        source: 'server',
-        target: 'issue-update',
-        label: 'pull',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12, fill: 'red' },
+        id: 'top-1-1-to-middle-1-1',
+        source: 'top-1-1',
+        target: 'middle-1-1',
         type: 'default',
-        style: { stroke: 'red', strokeWidth: 2 },
-        animated: true
+        markerEnd: { type: MarkerType.ArrowClosed },
+      },
+      {
+        id: 'middle-1-1-to-bottom-1-1',
+        source: 'middle-1-1',
+        target: 'bottom-1-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
+      },
+      {
+        id: 'bottom-1-1-to-project-1-1',
+        source: 'bottom-1-1',
+        target: 'project-1-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
+      },
+      {
+        id: 'project-1-1-to-task-1-1',
+        source: 'project-1-1',
+        target: 'task-1-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
+      },
+      {
+        id: 'project-1-1-to-task-1-2',
+        source: 'project-1-1',
+        target: 'task-1-2',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       
-      // Right Side - Project Service connections
+      // Case 2
       {
-        id: 'webhook-url-to-issue-entry',
-        source: 'webhook-url',
-        target: 'issue-entry',
+        id: 'cluster-2-to-top-2-1',
+        source: 'cluster-2',
+        target: 'top-2-1',
         type: 'default',
-        style: { stroke: 'black', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: 'black' }
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'issue-blue-to-issue-entry',
-        source: 'issue-blue',
-        target: 'issue-entry',
+        id: 'top-2-1-to-middle-2-1',
+        source: 'top-2-1',
+        target: 'middle-2-1',
         type: 'default',
-        style: { stroke: 'black', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: 'black' }
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'issue-entry-to-issue-submit',
-        source: 'issue-entry',
-        target: 'issue-submit',
+        id: 'middle-2-1-to-bottom-2-1',
+        source: 'middle-2-1',
+        target: 'bottom-2-1',
         type: 'default',
-        style: { stroke: 'black', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: 'black' }
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'issue-update-to-issue-blue',
-        source: 'issue-update',
-        target: 'issue-blue',
+        id: 'bottom-2-1-to-project-2-1',
+        source: 'bottom-2-1',
+        target: 'project-2-1',
         type: 'default',
-        style: { stroke: 'black', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: 'black' }
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'issue-submit-to-redis',
-        source: 'issue-submit',
-        target: 'redis-container',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+        id: 'project-2-1-to-task-2-1',
+        source: 'project-2-1',
+        target: 'task-2-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
+      },
+      
+      // Case 3
+      {
+        id: 'cluster-3-to-top-3-1',
+        source: 'cluster-3',
+        target: 'top-3-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'redis-to-issue-get',
-        source: 'redis-container',
-        target: 'issue-get',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+        id: 'top-3-1-to-middle-3-1',
+        source: 'top-3-1',
+        target: 'middle-3-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'issue-get-to-task-seal',
-        source: 'issue-get',
-        target: 'task-box-seal',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+        id: 'middle-3-1-to-bottom-3-1',
+        source: 'middle-3-1',
+        target: 'bottom-3-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'task-seal-to-task',
-        source: 'task-box-seal',
-        target: 'task',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+        id: 'bottom-3-1-to-project-3-1',
+        source: 'bottom-3-1',
+        target: 'project-3-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       },
       {
-        id: 'task-to-task-execute',
-        source: 'task',
-        target: 'task-box-execute',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
-      },
-      {
-        id: 'thread-pool-to-task-execute',
-        source: 'thread-pool',
-        target: 'task-box-execute',
-        type: 'smoothstep',
-        style: { stroke: '#c026d3', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+        id: 'project-3-1-to-task-3-1',
+        source: 'project-3-1',
+        target: 'task-3-1',
+        type: 'default',
+        markerEnd: { type: MarkerType.ArrowClosed },
       }
     ];
 
@@ -287,7 +395,7 @@ const AgentFramework: React.FC = () => {
   return (
     <div className="w-full h-full">
       <div className="absolute top-4 left-0 w-full text-center z-10">
-        <h1 className="text-3xl font-bold text-indigo-500">Jira服务工作流</h1>
+        <h1 className="text-3xl font-bold text-indigo-500">项目架构层级关系图</h1>
       </div>
       <ReactFlow
         nodes={nodes}
