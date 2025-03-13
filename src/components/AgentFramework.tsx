@@ -1,12 +1,11 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { 
   ReactFlow, 
   Node, 
   Edge, 
   Background, 
   Controls, 
-  MiniMap, 
   MarkerType,
   useNodesState,
   useEdgesState,
@@ -14,9 +13,24 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import NodeCard from './NodeCard';
+import JiraServiceNodes from './JiraServiceNodes';
 
 const nodeTypes: NodeTypes = {
-  card: NodeCard
+  card: NodeCard,
+  user: JiraServiceNodes.UserNode,
+  ui: JiraServiceNodes.UINode,
+  webhook: JiraServiceNodes.WebhookNode,
+  server: JiraServiceNodes.ServerNode,
+  issueBlue: JiraServiceNodes.IssueBlueNode,
+  issueEntry: JiraServiceNodes.IssueEntryNode,
+  webhookUrl: JiraServiceNodes.WebhookUrlNode,
+  issueSubmit: JiraServiceNodes.IssueSubmitNode,
+  issueGet: JiraServiceNodes.IssueGetNode,
+  redisContainer: JiraServiceNodes.RedisContainerNode,
+  issueUpdate: JiraServiceNodes.IssueUpdateNode,
+  task: JiraServiceNodes.TaskNode,
+  taskBox: JiraServiceNodes.TaskBoxNode,
+  threadPool: JiraServiceNodes.ThreadPoolNode
 };
 
 const AgentFramework: React.FC = () => {
@@ -26,187 +40,243 @@ const AgentFramework: React.FC = () => {
   useEffect(() => {
     // Define the nodes for our visualization
     const initialNodes: Node[] = [
-      // Center LLM node
+      // Left Side - Jira Service
       {
-        id: 'llm',
+        id: 'jira-title',
         type: 'default',
-        position: { x: 450, y: 250 },
+        position: { x: 170, y: 50 },
+        data: { label: 'Jira服务' },
+        style: { fontSize: '20px', fontWeight: 'bold', width: 120, background: 'transparent', border: 'none' }
+      },
+      {
+        id: 'user',
+        type: 'user',
+        position: { x: 60, y: 150 },
+        data: {}
+      },
+      {
+        id: 'ui',
+        type: 'ui',
+        position: { x: 170, y: 250 },
+        data: { label: 'UI' }
+      },
+      {
+        id: 'webhook',
+        type: 'webhook',
+        position: { x: 170, y: 420 },
+        data: { label: 'webhook' }
+      },
+      {
+        id: 'server',
+        type: 'server',
+        position: { x: 170, y: 670 },
+        data: { label: 'server' }
+      },
+      
+      // Right Side - Project Service
+      {
+        id: 'project-title',
+        type: 'default',
+        position: { x: 840, y: 50 },
+        data: { label: '项目中台服务' },
+        style: { fontSize: '20px', fontWeight: 'bold', width: 200, background: 'transparent', border: 'none' }
+      },
+      {
+        id: 'issue-entry',
+        type: 'issueEntry',
+        position: { x: 570, y: 370 },
+        data: { label: 'issue管理入口' }
+      },
+      {
+        id: 'webhook-url',
+        type: 'webhookUrl',
+        position: { x: 570, y: 470 },
+        data: { label: 'webhook-url' }
+      },
+      {
+        id: 'issue-blue',
+        type: 'issueBlue',
+        position: { x: 570, y: 570 },
+        data: { label: 'issue' }
+      },
+      {
+        id: 'issue-update',
+        type: 'issueUpdate',
+        position: { x: 570, y: 700 },
+        data: { label: '增量拉取更新issue' }
+      },
+      {
+        id: 'issue-submit',
+        type: 'issueSubmit',
+        position: { x: 570, y: 250 },
+        data: { label: '提交变更issue' }
+      },
+      {
+        id: 'redis-container',
+        type: 'redisContainer',
+        position: { x: 820, y: 220 },
         data: { 
-          label: (
-            <div className="flex flex-col items-center">
-              <div className="text-xl font-bold">LLMs</div>
-              <div className="w-16 h-16 mt-2 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" strokeWidth="1.5" fill="none">
-                  <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
-                  <path d="M10 17v3a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-3" />
-                  <path d="M8 14.5c-2 0-3-1-3-3" />
-                  <path d="M16 14.5c2 0 3-1 3-3" />
-                </svg>
-                <span className="absolute right-2 bottom-2 text-xl">AI</span>
-              </div>
-            </div>
-          ) 
-        },
-        style: {
-          width: 100,
-          height: 100,
-          borderRadius: '50%',
-          border: '2px solid #6366f1',
-          backgroundColor: 'white',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 10
+          title: '变更Issue缓冲',
+          queueTitle: 'redis队列' 
         }
       },
-      
-      // Role Pool Card
       {
-        id: 'role-pool',
-        type: 'card',
-        position: { x: 100, y: 150 },
-        data: { 
-          title: '角色池',
-          color: '#818cf8',
-          items: [
-            '开发：前端、后端、测试...',
-            '数据分析：数仓工程师、BI 分析师、DS 科学家...',
-            '游戏 NPC：普通人物、剧情...',
-            '行政角色：关系管理、日程安排...'
-          ]
-        },
-        style: { width: 320 }
+        id: 'issue-get',
+        type: 'issueGet',
+        position: { x: 1070, y: 250 },
+        data: { label: '获取变更issue' }
       },
-      
-      // Tool Pool Card
       {
-        id: 'tool-pool',
-        type: 'card',
-        position: { x: 100, y: 350 },
-        data: { 
-          title: '工具池',
-          color: '#818cf8',
-          items: [
-            'Calculator ()',
-            'Search ()',
-            'Calendar()',
-            'CodeInterpreter()',
-            'And more...'
-          ]
-        },
-        style: { width: 320 }
+        id: 'task-box-seal',
+        type: 'taskBox',
+        position: { x: 1070, y: 370 },
+        data: { label: '封装更新task' }
       },
-      
-      // Perception Card
       {
-        id: 'perception',
-        type: 'card',
-        position: { x: 450, y: 450 },
-        data: { 
-          title: '感知',
-          color: '#818cf8',
-          items: [
-            '虚拟环境：网页、PDF、表格',
-            '多模态：文本、视频、图片'
-          ]
-        },
-        style: { width: 300 }
+        id: 'task',
+        type: 'task',
+        position: { x: 1070, y: 490 },
+        data: { label: 'task' }
       },
-      
-      // Memory Card
       {
-        id: 'memory',
-        type: 'card',
-        position: { x: 800, y: 250 },
-        data: { 
-          title: '长期记忆',
-          color: '#818cf8',
-          sections: [
-            { title: '工作记忆', icon: '📝', subtitle: 'context' },
-            { title: '事件记忆', icon: '📅', subtitle: 'record' },
-            { title: '语义记忆', icon: '🧠', subtitle: 'knowledge' },
-            { title: '源程记忆', icon: '💻', subtitle: 'code' }
-          ]
-        },
-        style: { width: 340 }
+        id: 'task-box-execute',
+        type: 'taskBox',
+        position: { x: 1070, y: 610 },
+        data: { label: '执行task' }
+      },
+      {
+        id: 'thread-pool',
+        type: 'threadPool',
+        position: { x: 820, y: 550 },
+        data: { title: '任务更新线程池' }
       }
     ];
 
     // Define the edges for our visualization
     const initialEdges: Edge[] = [
-      // Role-play connection
+      // Left Side - Jira Service connections
       {
-        id: 'role-to-llm',
-        source: 'role-pool',
-        target: 'llm',
-        label: '职责扮演',
+        id: 'user-to-ui',
+        source: 'user',
+        target: 'ui',
+        label: 'operate',
         labelBgStyle: { fill: 'white' },
         labelStyle: { fontSize: 12 },
         type: 'smoothstep',
-        style: { stroke: '#6366f1', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+      },
+      {
+        id: 'ui-to-webhook',
+        source: 'ui',
+        target: 'webhook',
+        label: 'advice',
+        labelBgStyle: { fill: 'white' },
+        labelStyle: { fontSize: 12 },
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+      },
+      {
+        id: 'webhook-to-webhook-url',
+        source: 'webhook',
+        target: 'webhook-url',
+        label: 'push',
+        labelBgStyle: { fill: 'white' },
+        labelStyle: { fontSize: 12, fill: 'red' },
+        type: 'default',
+        style: { stroke: 'red', strokeWidth: 2 },
+      },
+      {
+        id: 'server-to-issue-update',
+        source: 'server',
+        target: 'issue-update',
+        label: 'pull',
+        labelBgStyle: { fill: 'white' },
+        labelStyle: { fontSize: 12, fill: 'red' },
+        type: 'default',
+        style: { stroke: 'red', strokeWidth: 2 },
+        animated: true
       },
       
-      // Tool using connection
+      // Right Side - Project Service connections
       {
-        id: 'tool-to-llm',
-        source: 'tool-pool',
-        target: 'llm',
-        label: '工具使用',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        type: 'smoothstep',
-        style: { stroke: '#6366f1', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
-      },
-      
-      // Reasoning connection (bidirectional)
-      {
-        id: 'llm-to-memory',
-        source: 'llm',
-        target: 'memory',
-        label: '推理',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        type: 'smoothstep',
-        style: { stroke: '#6366f1', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
+        id: 'webhook-url-to-issue-entry',
+        source: 'webhook-url',
+        target: 'issue-entry',
+        type: 'default',
+        style: { stroke: 'black', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: 'black' }
       },
       {
-        id: 'memory-to-llm',
-        source: 'memory',
-        target: 'llm',
-        label: '',
-        type: 'smoothstep',
-        style: { stroke: '#6366f1', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
+        id: 'issue-blue-to-issue-entry',
+        source: 'issue-blue',
+        target: 'issue-entry',
+        type: 'default',
+        style: { stroke: 'black', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: 'black' }
       },
-      
-      // Learning connection
       {
-        id: 'perception-to-llm',
-        source: 'perception',
-        target: 'llm',
-        label: '学习',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        type: 'smoothstep',
-        style: { stroke: '#6366f1', strokeWidth: 2 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
+        id: 'issue-entry-to-issue-submit',
+        source: 'issue-entry',
+        target: 'issue-submit',
+        type: 'default',
+        style: { stroke: 'black', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: 'black' }
       },
-      
-      // Retrieval connection
       {
-        id: 'llm-to-memory-search',
-        source: 'llm',
-        target: 'memory',
-        label: '检索',
-        labelBgStyle: { fill: 'white' },
-        labelStyle: { fontSize: 12 },
-        animated: true,
-        type: 'straight',
-        style: { stroke: '#6366f1', strokeWidth: 2, strokeDasharray: '5 5' },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#6366f1' }
+        id: 'issue-update-to-issue-blue',
+        source: 'issue-update',
+        target: 'issue-blue',
+        type: 'default',
+        style: { stroke: 'black', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: 'black' }
+      },
+      {
+        id: 'issue-submit-to-redis',
+        source: 'issue-submit',
+        target: 'redis-container',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+      },
+      {
+        id: 'redis-to-issue-get',
+        source: 'redis-container',
+        target: 'issue-get',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+      },
+      {
+        id: 'issue-get-to-task-seal',
+        source: 'issue-get',
+        target: 'task-box-seal',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+      },
+      {
+        id: 'task-seal-to-task',
+        source: 'task-box-seal',
+        target: 'task',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+      },
+      {
+        id: 'task-to-task-execute',
+        source: 'task',
+        target: 'task-box-execute',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
+      },
+      {
+        id: 'thread-pool-to-task-execute',
+        source: 'thread-pool',
+        target: 'task-box-execute',
+        type: 'smoothstep',
+        style: { stroke: '#c026d3', strokeWidth: 2 },
+        markerEnd: { type: MarkerType.Arrow, color: '#c026d3' }
       }
     ];
 
@@ -217,7 +287,7 @@ const AgentFramework: React.FC = () => {
   return (
     <div className="w-full h-full">
       <div className="absolute top-4 left-0 w-full text-center z-10">
-        <h1 className="text-3xl font-bold text-indigo-500">LLM-based Agent Framework</h1>
+        <h1 className="text-3xl font-bold text-indigo-500">Jira服务工作流</h1>
       </div>
       <ReactFlow
         nodes={nodes}

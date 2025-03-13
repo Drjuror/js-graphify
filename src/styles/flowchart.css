@@ -30,3 +30,130 @@
 .react-flow__controls button:hover {
   background-color: #f8fafc;
 }
+
+/* Custom node styles for the Jira workflow */
+.jira-node {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.node-user {
+  width: 50px;
+  height: 50px;
+}
+
+.node-ui {
+  background-color: #ffd580;
+  width: 150px;
+  height: 50px;
+}
+
+.node-webhook {
+  background-color: #ffd580;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+}
+
+.node-server {
+  background-color: #ffd580;
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+}
+
+.node-issue-blue {
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+}
+
+.node-issue-entry {
+  background-color: #ffb371;
+  width: 150px;
+  height: 40px;
+}
+
+.node-webhook-url {
+  background-color: #ffb4b4;
+  width: 200px;
+  height: 50px;
+}
+
+.node-issue-submit {
+  background-color: #a3e635;
+  width: 150px;
+  height: 40px;
+}
+
+.node-issue-get {
+  background-color: #a3e635;
+  width: 150px;
+  height: 40px;
+}
+
+.node-redis-container {
+  background-color: #bfdbfe;
+  border-radius: 8px;
+  padding: 20px;
+  width: 350px;
+  height: 150px;
+}
+
+.node-issue-update {
+  background-color: #ffb371;
+  width: 200px;
+  height: 40px;
+}
+
+.node-task {
+  background-color: #ffb371;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.node-task-box {
+  background-color: #ffb4b4;
+  width: 180px;
+  height: 50px;
+}
+
+.node-thread-pool {
+  background-color: #fdba74;
+  width: 250px;
+  height: 180px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.thread-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.thread-box {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 8px;
+  text-align: center;
+}
+
+.container-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
