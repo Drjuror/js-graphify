@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { 
   ReactFlow, 
@@ -33,7 +32,6 @@ const nodeTypes: NodeTypes = {
   task: JiraServiceNodes.TaskNode,
   taskBox: JiraServiceNodes.TaskBoxNode,
   threadPool: JiraServiceNodes.ThreadPoolNode,
-  // Project Hierarchy nodes
   cluster: ProjectHierarchyNodes.ClusterNode,
   projectNode: ProjectHierarchyNodes.ProjectNode,
   projectDeletedNode: ProjectHierarchyNodes.ProjectDeletedNode,
@@ -49,9 +47,7 @@ const AgentFramework: React.FC = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   
   useEffect(() => {
-    // Define the nodes for our visualization
     const initialNodes: Node[] = [
-      // Row Labels
       {
         id: 'label-cluster',
         type: 'labelNode',
@@ -89,41 +85,47 @@ const AgentFramework: React.FC = () => {
         data: { label: '任务' },
       },
       
-      // Case 1 - Deleting bottom project group
       {
         id: 'cluster-1',
         type: 'cluster',
         position: { x: 430, y: 50 },
+        data: {},
       },
       {
         id: 'top-1-1',
         type: 'projectNode',
         position: { x: 380, y: 150 },
+        data: {},
       },
       {
         id: 'middle-1-1',
         type: 'projectNode',
         position: { x: 330, y: 250 },
+        data: {},
       },
       {
         id: 'bottom-1-1',
         type: 'projectDeletedNode',
         position: { x: 280, y: 350 },
+        data: {},
       },
       {
         id: 'project-1-1',
         type: 'projectSetNode',
         position: { x: 280, y: 450 },
+        data: {},
       },
       {
         id: 'task-1-1',
         type: 'taskNode',
         position: { x: 230, y: 550 },
+        data: {},
       },
       {
         id: 'task-1-2',
         type: 'taskNode',
         position: { x: 330, y: 550 },
+        data: {},
       },
       {
         id: 'case-1',
@@ -132,36 +134,41 @@ const AgentFramework: React.FC = () => {
         data: { label: 'case1' },
       },
       
-      // Case 2 - Deleting top project group
       {
         id: 'cluster-2',
         type: 'cluster',
         position: { x: 580, y: 50 },
+        data: {},
       },
       {
         id: 'top-2-1',
         type: 'projectDeletedNode',
         position: { x: 580, y: 150 },
+        data: {},
       },
       {
         id: 'middle-2-1',
         type: 'projectNode',
         position: { x: 580, y: 250 },
+        data: {},
       },
       {
         id: 'bottom-2-1',
         type: 'projectNode',
         position: { x: 580, y: 350 },
+        data: {},
       },
       {
         id: 'project-2-1',
         type: 'projectSetNode',
         position: { x: 580, y: 450 },
+        data: {},
       },
       {
         id: 'task-2-1',
         type: 'taskNode',
         position: { x: 580, y: 550 },
+        data: {},
       },
       {
         id: 'case-2',
@@ -170,36 +177,41 @@ const AgentFramework: React.FC = () => {
         data: { label: 'case2' },
       },
       
-      // Case 3 - Deleting middle project group
       {
         id: 'cluster-3',
         type: 'cluster',
         position: { x: 730, y: 50 },
+        data: {},
       },
       {
         id: 'top-3-1',
         type: 'projectNode',
         position: { x: 780, y: 150 },
+        data: {},
       },
       {
         id: 'middle-3-1',
         type: 'projectDeletedNode',
         position: { x: 830, y: 250 },
+        data: {},
       },
       {
         id: 'bottom-3-1',
         type: 'projectNode',
         position: { x: 880, y: 350 },
+        data: {},
       },
       {
         id: 'project-3-1',
         type: 'projectSetNode',
         position: { x: 880, y: 450 },
+        data: {},
       },
       {
         id: 'task-3-1',
         type: 'taskNode',
         position: { x: 880, y: 550 },
+        data: {},
       },
       {
         id: 'case-3',
@@ -208,7 +220,6 @@ const AgentFramework: React.FC = () => {
         data: { label: 'case3' },
       },
       
-      // Table at the bottom
       {
         id: 'table-header-1',
         type: 'explanation',
@@ -267,9 +278,7 @@ const AgentFramework: React.FC = () => {
       }
     ];
 
-    // Define the edges for our visualization
     const initialEdges: Edge[] = [
-      // Case 1
       {
         id: 'cluster-1-to-top-1-1',
         source: 'cluster-1',
@@ -313,7 +322,6 @@ const AgentFramework: React.FC = () => {
         markerEnd: { type: MarkerType.ArrowClosed },
       },
       
-      // Case 2
       {
         id: 'cluster-2-to-top-2-1',
         source: 'cluster-2',
@@ -350,7 +358,6 @@ const AgentFramework: React.FC = () => {
         markerEnd: { type: MarkerType.ArrowClosed },
       },
       
-      // Case 3
       {
         id: 'cluster-3-to-top-3-1',
         source: 'cluster-3',

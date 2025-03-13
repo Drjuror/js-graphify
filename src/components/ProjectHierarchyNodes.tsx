@@ -2,7 +2,11 @@
 import React from 'react';
 import { Handle, Position } from '@xyflow/react';
 
-const ClusterNode = () => {
+interface NodeData {
+  label?: string;
+}
+
+const ClusterNode = ({ data }: { data: NodeData }) => {
   return (
     <div className="node-cluster">
       <Handle type="source" position={Position.Bottom} />
@@ -10,7 +14,7 @@ const ClusterNode = () => {
   );
 };
 
-const ProjectNode = () => {
+const ProjectNode = ({ data }: { data: NodeData }) => {
   return (
     <div className="node-project">
       <Handle type="target" position={Position.Top} />
@@ -19,7 +23,7 @@ const ProjectNode = () => {
   );
 };
 
-const ProjectDeletedNode = () => {
+const ProjectDeletedNode = ({ data }: { data: NodeData }) => {
   return (
     <div className="node-project-deleted">
       <Handle type="target" position={Position.Top} />
@@ -28,7 +32,7 @@ const ProjectDeletedNode = () => {
   );
 };
 
-const ProjectSetNode = () => {
+const ProjectSetNode = ({ data }: { data: NodeData }) => {
   return (
     <div className="node-project-set">
       <Handle type="target" position={Position.Top} />
@@ -37,7 +41,7 @@ const ProjectSetNode = () => {
   );
 };
 
-const TaskNode = () => {
+const TaskNode = ({ data }: { data: NodeData }) => {
   return (
     <div className="node-task">
       <Handle type="target" position={Position.Top} />
@@ -45,7 +49,7 @@ const TaskNode = () => {
   );
 };
 
-const LabelNode = ({ data }) => {
+const LabelNode = ({ data }: { data: { label: string } }) => {
   return (
     <div className="node-label">
       {data.label}
@@ -53,7 +57,7 @@ const LabelNode = ({ data }) => {
   );
 };
 
-const CaseLabelNode = ({ data }) => {
+const CaseLabelNode = ({ data }: { data: { label: string } }) => {
   return (
     <div className="node-case-label">
       {data.label}
@@ -61,7 +65,7 @@ const CaseLabelNode = ({ data }) => {
   );
 };
 
-const ExplanationNode = ({ data }) => {
+const ExplanationNode = ({ data }: { data: { label: string } }) => {
   return (
     <div className="node-explanation">
       {data.label}
